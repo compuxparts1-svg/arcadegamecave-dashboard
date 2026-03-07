@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcadeGameCave Projects Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .refresh-info {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .project-number {
+            font-size: 0.85em;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .project-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-planning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-paused {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-done {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-blocked {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .priority {
+            font-size: 0.8em;
+            color: #666;
+            margin: 6px 0;
+        }
+
+        .priority-high {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .priority-medium {
+            color: #f39c12;
+            font-weight: 500;
+        }
+
+        .priority-low {
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 6px;
+            height: 6px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85em;
+            color: #999;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .next-step {
+            background: #f5f5f5;
+            padding: 6px;
+            border-radius: 4px;
+            margin: 6px 0;
+            border-left: 2px solid #667eea;
+        }
+
+        .next-step-label {
+            font-size: 0.65em;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .next-step-text {
+            color: #333;
+            margin-top: 2px;
+            font-size: 0.75em;
+        }
+
+        .owner {
+            font-size: 0.7em;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 8px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 0.8em;
+        }
+
+        .stats-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 6px;
+            padding: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stats-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-title {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 1px;
+        }
+
+        .stat-label {
+            font-size: 0.65em;
+            opacity: 0.9;
+        }
+
+        .calendar-tile {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .calendar-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .calendar-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .calendar-events {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .calendar-event {
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .calendar-event:last-child {
+            border-bottom: none;
+        }
+
+        .event-date {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .event-time {
+            font-size: 0.75em;
+            color: #999;
+        }
+
+        .event-title {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .notes-tile {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .notes-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .notes-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .notes-list {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .note-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .note-item:last-child {
+            border-bottom: none;
+        }
+
+        .note-text {
+            font-size: 0.8em;
+            color: #555;
+            line-height: 1.3;
+        }
+
+        .note-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.65em;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3px;
+            margin-top: 6px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+        }
+
+        .legend-item {
+            color: white;
+            font-size: 0.65em;
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 ArcadeGameCave</h1>
+            <p>Projects Dashboard</p>
+            <div class="refresh-info" id="refreshInfo">Loading projects...</div>
+        </header>
+
+        <div id="errorContainer"></div>
+        <div id="topTilesContainer" class="stats-grid-container"></div>
+        <div id="projectsContainer" class="projects-grid"></div>
+        <div id="notesContainer"></div>
+
+        <footer>
+            <p>Dashboard auto-updates from PROJECTS.md</p>
+            <p style="margin-top: 10px; opacity: 0.7;">Auto-refreshes every 10 seconds</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load daily profits from .ebay-daily-profit.json
+        async function loadDailyProfits() {
+            try {
+                const response = await fetch('./.ebay-daily-profit.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    return `
+                    <div class="calendar-tile">
+                        <div class="calendar-title">💰 Daily Profits</div>
+                        <div class="calendar-events">
+                            <div class="calendar-event">
+                                <div class="event-date">Today's Profit</div>
+                                <div class="event-title" style="font-size: 1em; color: #999;">Pending...</div>
+                            </div>
+                            <div class="calendar-event">
+                                <div class="event-date">Status</div>
+                                <div class="event-title" style="color: #27ae60; font-weight: 600;">✅ LIVE</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
+                            📍 Reports at 8:00 AM MT
+                        </div>
+                    </div>`;
+                }
+                const data = await response.json();
+                return `
+                <div class="calendar-tile">
+                    <div class="calendar-title">💰 Daily Profits (All Platforms)</div>
+                    <div class="calendar-events">
+                        <div class="calendar-event">
+                            <div class="event-date">eBay Profit (30%)</div>
+                            <div class="event-title" style="font-size: 1.1em; color: #27ae60; font-weight: 600;">$${data.profit.toFixed(2)}</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-date">eBay Orders</div>
+                            <div class="event-title">${data.orders} order${data.orders === 1 ? '' : 's'}</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-date">Other Platforms</div>
+                            <div class="event-title" style="color: #999;">Mercari (pending), etc</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
+                        eBay updated: ${new Date(data.timestamp).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
+                    </div>
+                </div>`;
+            } catch (error) {
+                return `
+                <div class="calendar-tile">
+                    <div class="calendar-title">💰 Daily Profits</div>
+                    <div class="calendar-events">
+                        <div class="calendar-event">
+                            <div class="event-date">Today's Profit</div>
+                            <div class="event-title" style="font-size: 1em; color: #999;">Pending...</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-date">Status</div>
+                            <div class="event-title" style="color: #27ae60; font-weight: 600;">✅ LIVE</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
+                        📍 Reports at 8:00 AM MT
+                    </div>
+                </div>`;
+            }
+        }
+
+        // Load calendar events
+        async function loadCalendarEvents() {
+            const calendarHTML = `
+            <div class="calendar-tile">
+                <div class="calendar-title">📅 Calendar</div>
+                <div class="calendar-events">
+                    <div class="calendar-event">
+                        <div class="event-date">Today</div>
+                        <div class="event-time">${new Date().toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
+                    📍 Keep updated
+                </div>
+            </div>`;
+            return calendarHTML;
+        }
+
+        // Load notes from MEMORY.md
+        async function loadNotesAndReminders() {
+            try {
+                const response = await fetch('./MEMORY.md', { cache: 'no-store' });
+                const text = await response.text();
+                const reminders = [];
+
+                // Extract pending items
+                if (text.includes('PENDING')) {
+                    const pendingMatch = text.match(/⏳\s*\*\*PENDING:\*\*\s*(.+?)(?:\n|$)/);
+                    if (pendingMatch) {
+                        reminders.push({ text: pendingMatch[1].trim(), tag: 'PENDING', priority: true });
+                    }
+                }
+
+                let notesItemsHTML = '';
+                if (reminders.length > 0) {
+                    reminders.slice(0, 4).forEach(reminder => {
+                        const priorityClass = reminder.priority ? 'style="color: #e74c3c; font-weight: 600;"' : '';
+                        const tagColor = reminder.tag === 'PENDING' ? '#e74c3c' : '#3498db';
+                        notesItemsHTML += `
+                        <div class="note-item">
+                            <div class="note-text" ${priorityClass}>${reminder.text}</div>
+                            <div class="note-tag" style="background: ${tagColor}20; color: ${tagColor};">${reminder.tag}</div>
+                        </div>`;
+                    });
+                } else {
+                    notesItemsHTML = '<div style="color: #999; font-size: 0.8em;"><em>No pending reminders</em></div>';
+                }
+
+                return `
+                <div class="notes-tile">
+                    <div class="notes-title">📝 Notes & Reminders</div>
+                    <div class="notes-list">
+                        ${notesItemsHTML}
+                    </div>
+                </div>`;
+            } catch (error) {
+                return `
+                <div class="notes-tile">
+                    <div class="notes-title">📝 Notes & Reminders</div>
+                    <div class="notes-list" style="color: #999; font-size: 0.8em;">
+                        <em>Unable to load reminders</em>
+                    </div>
+                </div>`;
+            }
+        }
+
+        // Fetch PROJECTS.md
+        async function loadProjects() {
+            try {
+                const response = await fetch('./projects.md', { cache: 'no-store', headers: { 'Accept': 'text/plain' } });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const markdown = await response.text();
+                const projects = parseProjectsMarkdown(markdown);
+                renderDashboard(projects);
+                const now = new Date();
+                const timeStr = now.toLocaleString('en-US', { timeZone: 'America/Denver', hour: '2-digit', minute: '2-digit', second: '2-digit', month: 'short', day: 'numeric' });
+                document.getElementById('refreshInfo').textContent = `Last updated: ${timeStr} MST`;
+                document.getElementById('errorContainer').innerHTML = '';
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function parseProjectsMarkdown(markdown) {
+            const projects = [];
+            const lines = markdown.split('\n');
+            let currentProject = null;
+            let inActiveSection = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.includes('## Active Projects')) {
+                    inActiveSection = true;
+                    continue;
+                }
+                if (inActiveSection && line.match(/^## (?!Active)/)) break;
+                if (!inActiveSection) continue;
+
+                if (line.match(/^###\s+\d+\.\s+(.+)/)) {
+                    if (currentProject) projects.push(currentProject);
+                    const match = line.match(/^###\s+(\d+)\.\s+(.+)/);
+                    currentProject = {
+                        number: match[1],
+                        title: match[2].trim(),
+                        status: '',
+                        priority: '',
+                        owner: '',
+                        description: '',
+                        deliverables: [],
+                        nextStep: '',
+                        notes: '',
+                        warning: ''
+                    };
+                    continue;
+                }
+
+                if (!currentProject) continue;
+
+                if (line.match(/^\*\*Status:\*\*/)) currentProject.status = extractValue(line);
+                else if (line.match(/^\*\*Priority:\*\*/)) currentProject.priority = extractValue(line);
+                else if (line.match(/^\*\*Owner:\*\*/)) currentProject.owner = extractValue(line);
+                else if (line.match(/^\*\*Description:\*\*/)) currentProject.description = extractValue(line);
+                else if (line.match(/^\*\*Next:\*\*/)) currentProject.nextStep = extractValue(line);
+                else if (line.match(/^\*\*Notes:\*\*/)) currentProject.notes = extractValue(line);
+                else if (line.match(/^⚠️/)) currentProject.warning = line.replace(/^⚠️\s*/, '').replace(/\*\*/g, '').trim();
+                else if (line.match(/^- \[[\sx]\]/)) {
+                    const isChecked = line.includes('[x]');
+                    const text = line.replace(/^- \[[\sx]\]\s*/, '').trim();
+                    if (text) currentProject.deliverables.push({ text, checked: isChecked });
+                }
+            }
+
+            if (currentProject) projects.push(currentProject);
+            return projects;
+        }
+
+        function extractValue(line) {
+            const match = line.match(/\*\*[^*]+:\*\*\s*(.+)/);
+            if (!match) return '';
+            return match[1].trim().replace(/\*\*/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        }
+
+        function renderDashboard(projects) {
+            if (projects.length === 0) {
+                showError('No projects found');
+                return;
+            }
+
+            const stats = { total: projects.length, active: 0, planning: 0, paused: 0, blocked: 0, done: 0 };
+            projects.forEach(p => {
+                if (p.status.includes('🟢') || p.status.includes('ACTIVE')) stats.active++;
+                else if (p.status.includes('🟡') || p.status.includes('PLANNING')) stats.planning++;
+                else if (p.status.includes('⏸️') || p.status.includes('PAUSED')) stats.paused++;
+                else if (p.status.includes('🔴') || p.status.includes('BLOCKED')) stats.blocked++;
+                else if (p.status.includes('✅') || p.status.includes('DONE')) stats.done++;
+            });
+
+            Promise.all([loadCalendarEvents(), loadNotesAndReminders(), loadDailyProfits()]).then(([calendarHTML, notesHTML, profitsHTML]) => {
+                const statsHTML = `
+                <div class="stats-section">
+                    <div class="stats-title">📊 Project Overview</div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number">${stats.total}</div><div class="stat-label">Total</div></div>
+                        <div class="stat-card"><div class="stat-number">${stats.active}</div><div class="stat-label">Active</div></div>
+                        <div class="stat-card"><div class="stat-number">${stats.planning}</div><div class="stat-label">Planning</div></div>
+                        <div class="stat-card"><div class="stat-number">${stats.paused}</div><div class="stat-label">Paused</div></div>
+                        <div class="stat-card"><div class="stat-number">${stats.blocked}</div><div class="stat-label">Blocked</div></div>
+                    </div>
+                </div>`;
+                document.getElementById('topTilesContainer').innerHTML = statsHTML + profitsHTML + calendarHTML + notesHTML;
+            });
+
+            const projectsHTML = projects.map(project => {
+                const completed = project.deliverables.filter(d => d.checked).length;
+                const total = project.deliverables.length;
+                const progress = total > 0 ? (completed / total) * 100 : 0;
+                const statusClass = project.status.includes('🟢') || project.status.includes('ACTIVE') ? 'status-active' :
+                    project.status.includes('🟡') || project.status.includes('PLANNING') ? 'status-planning' :
+                    project.status.includes('⏸️') || project.status.includes('PAUSED') ? 'status-paused' :
+                    project.status.includes('🔴') || project.status.includes('BLOCKED') ? 'status-blocked' : 'status-done';
+                const priorityClass = project.priority.includes('HIGH') ? 'priority-high' :
+                    project.priority.includes('MEDIUM') ? 'priority-medium' : 'priority-low';
+
+                return `
+                <div class="project-card">
+                    <div class="project-header">
+                        <div>
+                            <div class="project-number">Project ${project.number}</div>
+                            <div class="project-title">${project.title}</div>
+                        </div>
+                        <div class="status-badge ${statusClass}">${project.status}</div>
+                    </div>
+                    ${project.priority ? `<div class="priority ${priorityClass}">${project.priority}</div>` : ''}
+                    ${project.description ? `<p class="description">${project.description}</p>` : ''}
+                    ${project.warning ? `<div class="warning">${project.warning}</div>` : ''}
+                    ${project.deliverables.length > 0 ? `
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="progress-text">${Math.round(progress)}% Complete (${completed} of ${total})</div>` : ''}
+                    ${project.nextStep ? `
+                    <div class="next-step">
+                        <div class="next-step-label">Next Step</div>
+                        <div class="next-step-text">${project.nextStep}</div>
+                    </div>` : ''}
+                    ${project.owner ? `<div class="owner">👤 ${project.owner}</div>` : ''}
+                </div>`;
+            }).join('');
+
+            document.getElementById('projectsContainer').innerHTML = projectsHTML;
+        }
+
+        function showError(message) {
+            const errorHTML = `
+            <div class="error">
+                <strong>⚠️ Error:</strong> ${message}<br><br>
+                <small>Make sure projects.md and MEMORY.md are in the same directory as this file.</small>
+            </div>`;
+            document.getElementById('errorContainer').innerHTML = errorHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProjects();
+            setInterval(loadProjects, 10000);
+        });
+    </script>
+</body>
+</html>
