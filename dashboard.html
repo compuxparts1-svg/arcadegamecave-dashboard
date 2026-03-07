@@ -491,23 +491,20 @@
         // Load calendar events
         async function loadOpenRouterUsage() {
             try {
-                const response = await fetch('https://api.openrouter.ai/api/v1/auth/key', {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('openrouter_token') || '' },
-                    cache: 'no-store'
-                });
+                const response = await fetch('./openrouter-usage.json', { cache: 'no-store' });
                 
                 if (!response.ok) {
                     return `
                     <div class="calendar-tile">
                         <div class="calendar-title">💳 OpenRouter Usage</div>
                         <div class="calendar-events" style="color: #999; font-size: 0.8em;">
-                            <em>Unable to load (no token in browser)</em>
+                            <em>No usage data yet</em>
                         </div>
                     </div>`;
                 }
                 
                 const data = await response.json();
-                const usage = data.data;
+                const usage = data;
                 const budgetDaily = 5.00;
                 const budgetMonthly = 100.00;
                 const dailyStatus = usage.usage_daily > budgetDaily ? '⚠️ OVER' : '✅ OK';
