@@ -546,24 +546,58 @@
         }
 
         async function loadCalendarEvents() {
-            const calendarHTML = `
+            try {
+                const response = await fetch('./google-calendar-events.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    return getDefaultCalendar();
+                }
+                const events = await response.json();
+                
+                let eventsHTML = '';
+                if (events.length > 0) {
+                    events.slice(0, 3).forEach(event => {
+                        const eventDate = new Date(event.start).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'});
+                        const eventTime = new Date(event.start).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                        eventsHTML += `
+                        <div class="calendar-event">
+                            <div class="event-date">${eventDate}</div>
+                            <div class="event-title">${event.summary}</div>
+                            <div class="event-time">${eventTime}</div>
+                        </div>`;
+                    });
+                } else {
+                    eventsHTML = '<div style="color: #999; font-size: 0.8em;"><em>No upcoming events</em></div>';
+                }
+                
+                return `
+                <div class="calendar-tile">
+                    <div class="calendar-title">📅 Google Calendar</div>
+                    <div class="calendar-events">
+                        ${eventsHTML}
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
+                        📍 Synced with compuxparts1@gmail.com
+                    </div>
+                </div>`;
+            } catch (error) {
+                return getDefaultCalendar();
+            }
+        }
+
+        function getDefaultCalendar() {
+            return `
             <div class="calendar-tile">
-                <div class="calendar-title">📅 Calendar</div>
+                <div class="calendar-title">📅 Google Calendar</div>
                 <div class="calendar-events">
                     <div class="calendar-event">
                         <div class="event-date">Today</div>
                         <div class="event-time">${new Date().toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</div>
                     </div>
-                    <div class="calendar-event">
-                        <div class="event-date">Fri, Mar 13</div>
-                        <div class="event-title">🔵 Appointment</div>
-                    </div>
                 </div>
                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.7em; color: #999;">
-                    📍 Keep updated
+                    📍 Loading calendar...
                 </div>
             </div>`;
-            return calendarHTML;
         }
 
         // Load notes from MEMORY.md

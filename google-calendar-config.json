@@ -1,0 +1,7 @@
+{
+  "clientId": "152598393379-5jeor2krkigm50nla91kpelbudqkc9ti.apps.googleusercontent.com",
+  "clientSecret": "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",
+  "calendarId": "compuxparts1@gmail.com",
+  "redirectUri": "http://localhost:8000/",
+  "scopes": ["https://www.googleapis.com/auth/calendar.readonly"]
+}
