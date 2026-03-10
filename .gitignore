@@ -1,0 +1,32 @@
+node_modules/
+*.log
+.DS_Store
+.env
+.env.local
+backups/
+*.swp
+*.swo
+*~
+.git-credentials
+
+# Secrets (NEVER commit these)
+.ebay-token*
+.ebay-config*
+.agentmail-api-key
+.gws-token.json
+.clawhub-token
+.openclaw-gateway-token
+.openrouter-key
+ebay-config.js
+
+# Generated/temporary
+.ebay-daily-profit.json
+.ebay-token-test.json
+email-alerts.queue
+*.tmp
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace

@@ -1,0 +1,23 @@
+{
+  "model": "openrouter/anthropic/claude-haiku-4.5",
+  "pricing": {
+    "input_per_1m": 0.80,
+    "output_per_1m": 2.40
+  },
+  "daily_logs": {
+    "2026-03-10": {
+      "input_tokens": 1500,
+      "output_tokens": 1300,
+      "input_cost": 0.0012,
+      "output_cost": 0.0031,
+      "total_cost": 0.0043,
+      "sessions": 1,
+      "notes": "Backup restore + dashboard setup"
+    }
+  },
+  "totals": {
+    "all_time_input": 1500,
+    "all_time_output": 1300,
+    "all_time_cost": 0.0043
+  }
+}
